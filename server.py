@@ -10,26 +10,10 @@ def get_database():
 
     return client['sensors_data']
 
-
-# curl -X POST --json '{"sensor_id":10, "data":35}' http://127.0.0.1:5000/data/temp
-# curl -X POST --json '{"sensor_id":10, "data":35}' http://127.0.0.1:5000/data/press
 @app.post('/data/<data_type>')
 def store_data(data_type):
 
-    '''
-    try:
-        body = request.get_json()
 
-        id = body['id']
-        data = body['data']
-
-    except KeyError:
-        print("[STORE TEMP DATA] Bad reuqest")
-        return {result: "FAILURE"}, 400
-    '''
-
-    # Ottengo già un dizionario dalla get_json, quindi non ho bisogno di trasformazioni
-    # Non faccio check sui campi, per avere flessibilità sul formato dati (dato l'utilizzo di un NoSQL database)
     body = request.get_json()
 
     # Richiedo la connessione al DB
@@ -54,8 +38,6 @@ def store_data(data_type):
         return {'result': 'success'}
 
 
-# curl -X POST --json '{"_id":10, "data_type":"temp"}' http://127.0.0.1:5000/sensor/
-# curl -X POST --json '{"_id":20, "data_type":"press"}' http://127.0.0.1:5000/sensor/
 @app.post('/sensor')
 def add_sensor():
 
@@ -85,7 +67,6 @@ def add_sensor():
 @app.get('/')
 def show_temp():
     db = get_database()
-    # Prende tutti i dati della temperatura e nasconde l'_id di Mongo per evitare errori
     data = list(db['temp_data'].find({}, {'_id': 0}))
     return {"dati_salvati": data}
 
